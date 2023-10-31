@@ -1,0 +1,79 @@
+Pod
+ apiVersion: v1
+ kind: Pod
+ metadata:
+   name: tp04-pod
+   namespace: my-namespace
+ spec:
+   containers:
+   - name: tp-wik-dps-tp04
+     image: registry.cluster.wik.cloud/public/echo
+     ports:
+     - containerPort: 8080
+
+
+ReplicaSet 
+ apiVersion: apps/v1
+ kind: ReplicaSet
+ metadata:
+   name: tp04-replicaset
+   namespace: my-namespace
+ spec:
+   replicas: 4
+   selector:
+     matchLabels:
+       app: tp04
+   template:
+     metadata:
+       labels:
+         app: tp04
+     spec:
+       containers:
+         - name: tp-wik-dps-tp04
+           image: registry.cluster.wik.cloud/public/echo
+           ports:
+             - containerPort: 8080
+
+
+
+Deployment 
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: tp04-deployment
+   namespace: my-namespace
+ spec:
+   replicas: 4
+   selector:
+     matchLabels:
+       app: tp04
+   template:
+     metadata:
+       labels:
+         app: tp04
+     spec:
+       containers:
+         - name: tp-wik-dps-tp04
+           image: registry.cluster.wik.cloud/public/echo
+           ports:
+             - containerPort: 8080
+   strategy:
+     type: RollingUpdate
+     rollingUpdate:
+       maxUnavailable: 50%
+
+
+Service 
+ apiVersion: v1
+ kind: Service
+ metadata:
+   name: tp04-service
+   namespace: my-namespace
+ spec:
+   selector:
+     app: tp04
+   ports:
+     - name: http
+       protocol: TCP
+       port: 8080
+       targetPort: 8080
